@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preprod-m-cloudcortex-deployment
+  namespace: preprod
+  labels:
+    app: m-cloudcortex
+    env: preprod
+spec:
+  replicas: 3
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 100%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: m-cloudcortex
+      env: preprod
+  template:
+    metadata:
+      labels:
+        app: m-cloudcortex
+        env: preprod
+    spec:
+      containers:
+        - name: m-cloudcortex
+          image: 861276077332.dkr.ecr.ap-south-1.amazonaws.com/m-cloudcortex:latest
+          resources:
+            requests:
+              memory: 50Mi
+              cpu: 50m
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          ports:
+            - containerPort: 8080
+              name: api
+          volumeMounts:
+            - mountPath: /app/config
+              name: application-config
+    volumes:
+      - name: application-config
+        configMap:
+          name: preprod-m-cloudcortex-application-config

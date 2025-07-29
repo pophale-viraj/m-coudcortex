@@ -1,0 +1,17 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dev-m-cloudcortex-hpa
+  namespace: dev
+  labels:
+    env: dev
+    app: m-cloudcortex
+    layer: frontend
+spec:
+  maxReplicas: 10
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: dev-m-cloudcortex-deployment
+  targetCPUUtilizationPercentage: 80
